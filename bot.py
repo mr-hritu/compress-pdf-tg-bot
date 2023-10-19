@@ -1,9 +1,10 @@
+
 import os
 from pyrogram import Client, filters
 from PyPDF2 import PdfReader, PdfWriter
 
 # Replace 'YOUR_API_ID' and 'YOUR_API_HASH' with your Telegram API credentials
-app = Client("compress_bot", api_id=29943901, api_hash="1028f4e64a5ba57ec59f4587feeabc95", bot_token="6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64")
+app = Client("compress_bot", api_id=29943901, api_hash="1028f4e64a5ba57ec59f4587feeabc95", bot_token="6660071929:AAFjXcut37ti05_AahCG7nvHdKRQDyUuBaI")
 
 # Function to handle documents
 @app.on_message(filters.document)
@@ -29,7 +30,7 @@ def compress_document(file_path):
         writer = PdfWriter()
         for page in reader.pages:
             writer.add_page(page)
-        writer.compress()
+        writer.set_compression(True)
         writer.write(output_file)
     return output_path
 
