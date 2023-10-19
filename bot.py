@@ -30,7 +30,7 @@ def compress_pdf(bot, update):
     os.remove(f'{file_name}_compressed.pdf')
 
 # Create an instance of the Updater class
-updater = Updater('6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64')
+updater = Updater('6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64', use_context=True, update_queue=None)
 
 # Get the dispatcher to register handlers
 dispatcher = updater.dispatcher
