@@ -5,7 +5,7 @@ from presets import Presets
 from pyrogram.types import Message
 from pyrogram import Client, filters
 from support.file_size import get_size
-from PDFNetPython3 import *
+from pdfnetpython3 import *
 from support.markups import close_button
 from support.display_progress import progress_for_pyrogram
 
