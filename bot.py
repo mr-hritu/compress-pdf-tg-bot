@@ -1,7 +1,7 @@
 
 import os
 import pyrogram
-from PyPDF2 import PdfFileWriter, PdfReader
+from PyPDF2 import PdfWriter, PdfReader
 
 # Pyrogram API credentials
 API_ID = 29943901
@@ -37,7 +37,7 @@ def compress_pdf(file_path):
     output_file_path = f"compressed_{os.path.basename(file_path)}"
     with open(file_path, 'rb') as file:
         pdf_reader = PdfReader(file)
-        pdf_writer = PdfFileWriter()
+        pdf_writer = PdfWriter()
 
         # Copy each page and add it to the writer
         for page_num in range(pdf_reader.getNumPages()):
