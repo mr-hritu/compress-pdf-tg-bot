@@ -3,7 +3,7 @@ import telebot
 from PyPDF2 import PdfFileReader, PdfFileWriter
 
 # Telegram bot token
-TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
+TOKEN = '6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64'
 
 # Initialize the Telegram bot
 bot = telebot.TeleBot(TOKEN)
