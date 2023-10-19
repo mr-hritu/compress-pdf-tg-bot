@@ -1,12 +1,19 @@
-
 import os
 import PyPDF2
-from telegram.ext import Updater, CommandHandler
+from pyrogram import Client, filters
+from pyrogram.types import InputFile
 
-def compress_pdf(update, context):
+# Create a Pyrogram client
+api_id = "29943901"
+api_hash = "1028f4e64a5ba57ec59f4587feeabc95"
+bot_token = "6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64"
+
+app = Client("pdf_compressor_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
+
+@app.on_message(filters.document)
+def compress_pdf(client, message):
     # Get the PDF file sent by the user
-    file = context.bot.getFile(update.message.document.file_id)
-    file_path = file.download()
+    file_path = client.download_media(message)
 
     # Compress the PDF file
     output_path = os.path.splitext(file_path)[0] + "_compressed.pdf"
@@ -23,22 +30,15 @@ def compress_pdf(update, context):
             pdf_writer.write(output_file)
 
     # Send the compressed PDF file back to the user
-    context.bot.send_document(chat_id=update.effective_chat.id, document=open(output_path, 'rb'))
-    
+    client.send_document(message.chat.id, document=InputFile(output_path))
+
     # Remove temporary files
     os.remove(file_path)
     os.remove(output_path)
 
-def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome to the PDF compression bot!")
+@app.on_message(filters.command("start"))
+def start_command(client, message):
+    client.send_message(message.chat.id, "Welcome to the PDF compression bot!")
 
-if __name__ == '__main__':
-    TOKEN = '6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64'
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
-
-    dp.add_handler(CommandHandler('start', start))
-    dp.add_handler(CommandHandler('compress', compress_pdf))
-
-    updater.start_polling()
-    updater.idle()
+# Run the bot
+app.run()
