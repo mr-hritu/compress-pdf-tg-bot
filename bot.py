@@ -1,42 +1,44 @@
+
 import os
+import PyPDF2
 from telegram.ext import Updater, CommandHandler
-from PyPDF2 import PdfReader, PdfWriter
 
-# Define the handler function for the /compress command
-def compress_pdf(bot, update):
-    # Get the document file from the user
-    document = bot.getFile(update.message.document.file_id)
-    file_name = os.path.splitext(update.message.document.file_name)[0]
-
-    # Download the document file
-    document.download(f'{file_name}.pdf')
+def compress_pdf(update, context):
+    # Get the PDF file sent by the user
+    file = context.bot.getFile(update.message.document.file_id)
+    file_path = file.download()
 
     # Compress the PDF file
-    input_pdf = PdfReader(f'{file_name}.pdf')
-    output_pdf = PdfWriter()
+    output_path = os.path.splitext(file_path)[0] + "_compressed.pdf"
+    with open(file_path, 'rb') as file:
+        pdf_reader = PyPDF2.PdfFileReader(file)
+        pdf_writer = PyPDF2.PdfFileWriter()
 
-    for page in input_pdf.pages:
-        page.compress_content_streams()
-        output_pdf.add_page(page)
+        for page_num in range(pdf_reader.numPages):
+            page = pdf_reader.getPage(page_num)
+            page.compressContentStreams()  # Compress the content of each page
+            pdf_writer.addPage(page)
 
-    # Save the compressed PDF file
-    output_pdf.write(f'{file_name}_compressed.pdf')
+        with open(output_path, 'wb') as output_file:
+            pdf_writer.write(output_file)
 
     # Send the compressed PDF file back to the user
-    bot.send_document(chat_id=update.message.chat_id, document=open(f'{file_name}_compressed.pdf', 'rb'))
+    context.bot.send_document(chat_id=update.effective_chat.id, document=open(output_path, 'rb'))
+    
+    # Remove temporary files
+    os.remove(file_path)
+    os.remove(output_path)
 
-    # Clean up temporary files
-    os.remove(f'{file_name}.pdf')
-    os.remove(f'{file_name}_compressed.pdf')
+def start(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome to the PDF compression bot!")
 
-# Create an instance of the Updater class
-updater = Updater('6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64', use_context=True, update_queue=None)
+if __name__ == '__main__':
+    TOKEN = '6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64'
+    updater = Updater(TOKEN, use_context=True)
+    dp = updater.dispatcher
 
-# Get the dispatcher to register handlers
-dispatcher = updater.dispatcher
+    dp.add_handler(CommandHandler('start', start))
+    dp.add_handler(CommandHandler('compress', compress_pdf))
 
-# Register the /compress command handler
-dispatcher.add_handler(CommandHandler('compress', compress_pdf))
-
-# Start the bot
-updater.start_polling()
+    updater.start_polling()
+    updater.idle()
