@@ -30,7 +30,7 @@ def compress_pdf(update, context):
     os.remove(f'{file_name}_compressed.pdf')
 
 # Create an instance of the <link>Updater</link> class
-updater = Updater('YOUR_TELEGRAM_BOT_TOKEN', use_context=True)
+updater = Updater('6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64', use_context=True)
 
 # Get the dispatcher to register handlers
 dispatcher = updater.dispatcher
