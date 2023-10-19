@@ -1,54 +1,48 @@
-import os
 import telebot
-from PyPDF2 import PdfFileReader, PdfFileWriter
+from PyPDF2 import PdfReader
 
-# Telegram bot token
-TOKEN = '6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64'
-
-# Initialize the Telegram bot
-bot = telebot.TeleBot(TOKEN)
+# Replace 'YOUR_BOT_TOKEN' with your actual bot token
+bot = telebot.TeleBot('YOUR_BOT_TOKEN')
 
 @bot.message_handler(content_types=['document'])
 def handle_document(message):
-    # Check if the received file is a PDF
-    if message.document.mime_type == 'application/pdf':
-        # Download the PDF file
-        file_info = bot.get_file(message.document.file_id)
-        downloaded_file = bot.download_file(file_info.file_path)
-        file_name = message.document.file_name
+    # Download the PDF file
+    file_info = bot.get_file(message.document.file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
 
-        # Compress the PDF file
-        compressed_file = compress_pdf(downloaded_file, file_name)
+    # Compress the PDF file
+    compressed_file = compress_pdf(downloaded_file)
 
-        # Send the compressed PDF file back to the user
-        bot.send_document(message.chat.id, compressed_file)
+    # Send the compressed PDF file back to the user
+    bot.send_document(message.chat.id, compressed_file)
 
-        # Clean up the temporary files
-        os.remove(downloaded_file)
-        os.remove(compressed_file)
+def compress_pdf(file):
+    # Create a PDF reader object
+    pdf = PdfReader(file)
 
-def compress_pdf(file_data, file_name):
-    # Create a temporary file to store the compressed PDF
-    compressed_file_name = 'compressed_' + file_name
-    compressed_file_path = '/tmp/' + compressed_file_name
+    # Create a PDF writer object
+    pdf_writer = PdfWriter()
 
-    # Load the PDF file
-    pdf = PdfFileReader(file_data)
+    # Iterate through each page of the PDF
+    for page_number in range(len(pdf.pages)):
+        # Compress the page by reducing the image quality
+        page = pdf.pages[page_number]
+        page.compressContentStreams()
 
-    # Create a new PDF writer
-    pdf_writer = PdfFileWriter()
+        # Add the compressed page to the PDF writer
+        pdf_writer.add_page(page)
 
-    # Iterate through each page of the PDF and add it to the writer
-    for page_num in range(pdf.getNumPages()):
-        page = pdf.getPage(page_num)
-        page.compressContentStreams()  # Compress the content streams of the page
-        pdf_writer.addPage(page)
+    # Create a new file to store the compressed PDF
+    compressed_file = open('compressed.pdf', 'wb')
 
-    # Save the compressed PDF to the temporary file
-    with open(compressed_file_path, 'wb') as output_file:
-        pdf_writer.write(output_file)
+    # Write the compressed PDF to the file
+    pdf_writer.write(compressed_file)
 
-    return compressed_file_path
+    # Close the file
+    compressed_file.close()
+
+    # Return the path to the compressed PDF file
+    return 'compressed.pdf'
 
 # Start the bot
 bot.polling()
