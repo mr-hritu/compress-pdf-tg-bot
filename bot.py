@@ -40,7 +40,7 @@ def compress_pdf(file_path):
         pdf_writer = PdfWriter()
 
         # Copy each page and add it to the writer
-        for page_num in range(pdf_reader.getNumPages()):
+        for page_num in range(pdf_reader.len(reader.pages)):
             page = pdf_reader.getPage(page_num)
             pdf_writer.addPage(page)
 
