@@ -36,7 +36,7 @@ def handle_document(client, message):
 def compress_pdf(file_path):
     output_file_path = f"compressed_{os.path.basename(file_path)}"
     with open(file_path, 'rb') as file:
-        pdf_reader = PdfFileReader(file)
+        pdf_reader = PdfReader(file)
         pdf_writer = PdfFileWriter()
 
         # Copy each page and add it to the writer
