@@ -2,3 +2,4 @@ python-telegram-bot
 Tgcrypto
 telebot
 PyPDF2
+pycryptodome
