@@ -1,55 +1,42 @@
-import telebot
-from PyPDF2 import PdfReader, PdfWriter
-import tempfile
 import os
+from telegram.ext import Updater, CommandHandler
+from PyPDF2 import PdfReader, PdfWriter
 
-# Replace 'YOUR_BOT_TOKEN' with your actual bot token
-bot = telebot.TeleBot('6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64')
+# Define the handler function for the /compress command
+def compress_pdf(update, context):
+    # Get the document file from the user
+    document = context.bot.get_file(update.message.document.file_id)
+    file_name = os.path.splitext(update.message.document.file_name)[0]
 
-@bot.message_handler(content_types=['document'])
-def handle_document(message):
-    # Download the PDF file
-    file_info = bot.get_file(message.document.file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
+    # Download the document file
+    document.download(f'{file_name}.pdf')
 
-    # Create a temporary file to save the downloaded file
-    temp_file_path = tempfile.mktemp()
-    with open(temp_file_path, 'wb') as temp_file:
-        temp_file.write(downloaded_file)
+    # Compress the <link>PDF</link> file
+    input_pdf = PdfReader(f'{file_name}.pdf')
+    output_pdf = PdfWriter()
 
-    # Compress the PDF file
-    compressed_file = compress_pdf(temp_file_path)
+    for page in input_pdf.pages:
+        page.compress_content_streams()
+        output_pdf.add_page(page)
 
-    # Send the compressed PDF file back to the user
-    bot.send_document(message.chat.id, compressed_file)
+    # Save the compressed <link>PDF</link> file
+    output_pdf.write(f'{file_name}_compressed.pdf')
 
-def compress_pdf(file_path):
-    # Create a PDF reader object
-    pdf = PdfReader(file_path)
+    # Send the compressed <link>PDF</link> file back to the user
+    context.bot.send_document(chat_id=update.message.chat_id, document=open(f'{file_name}_compressed.pdf', 'rb'))
 
-    # Create a PDF writer object
-    pdf_writer = PdfWriter()
+    # Clean up temporary files
+    os.remove(f'{file_name}.pdf')
+    os.remove(f'{file_name}_compressed.pdf')
 
-    # Iterate through each page of the PDF
-    for page_number in range(len(pdf.pages)):
-        # Compress the page by reducing the image quality
-        page = pdf.pages[page_number]
-        page.compressContentStreams()
+# Create an instance of the <link>Updater</link> class
+updater = Updater('YOUR_TELEGRAM_BOT_TOKEN', use_context=True)
 
-        # Add the compressed page to the PDF writer
-        pdf_writer.add_page(page)
+# Get the dispatcher to register handlers
+dispatcher = updater.dispatcher
 
-    # Create a new file to store the compressed PDF
-    compressed_file_path = tempfile.mktemp(suffix='.pdf')
-    with open(compressed_file_path, 'wb') as compressed_file:
-        # Write the compressed PDF to the file
-        pdf_writer.write(compressed_file)
-
-    # Remove the temporary file
-    os.remove(file_path)
-
-    # Return the path to the compressed PDF file
-    return compressed_file_path
+# Register the /compress command handler
+dispatcher.add_handler(CommandHandler('compress', compress_pdf))
 
 # Start the bot
-bot.polling()
+updater.start_polling()
