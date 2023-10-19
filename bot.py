@@ -2,7 +2,7 @@ import telebot
 from PyPDF2 import PdfReader
 
 # Replace 'YOUR_BOT_TOKEN' with your actual bot token
-bot = telebot.TeleBot('YOUR_BOT_TOKEN')
+bot = telebot.TeleBot('6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64')
 
 @bot.message_handler(content_types=['document'])
 def handle_document(message):
