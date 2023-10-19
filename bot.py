@@ -1,7 +1,7 @@
 
 import os
 import pyrogram
-from PyPDF2 import PdfFileWriter, PdfFileReader
+from PyPDF2 import PdfFileWriter, PdfReader
 
 # Pyrogram API credentials
 API_ID = 29943901
