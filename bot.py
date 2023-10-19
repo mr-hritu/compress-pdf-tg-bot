@@ -1,7 +1,7 @@
 
 import os
 import pyrogram
-from PyPDF2 import PdfWriter, PdfReader
+from PyPDF2 import PdfFileWriter, PdfFileReader
 
 # Pyrogram API credentials
 API_ID = 29943901
@@ -36,17 +36,16 @@ def handle_document(client, message):
 def compress_pdf(file_path):
     output_file_path = f"compressed_{os.path.basename(file_path)}"
     with open(file_path, 'rb') as file:
-        pdf_reader = PdfReader(file)
-        pdf_writer = PdfWriter()
+        pdf_reader = PdfFileReader(file)
+        pdf_writer = PdfFileWriter()
 
         # Copy each page and add it to the writer
-        for page_num in range(len(pdf_reader.pages)):
-            page = pdf_reader.pages[page_num]
-            pdf_writer.add_page(page)
+        for page_num in range(pdf_reader.getNumPages()):
+            page = pdf_reader.getPage(page_num)
+            pdf_writer.addPage(page)
 
         # Set compression options
-        pdf_writer.compress_content_streams = True
-        pdf_writer.compress()
+        pdf_writer.setCompressionOptions(compress=True, compress_content_streams=True)
 
         # Write the compressed PDF file
         with open(output_file_path, 'wb') as output_file:
