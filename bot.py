@@ -2,7 +2,7 @@ import os
 from pyrogram import Client, filters
 from PyPDF2 import PdfFileWriter, PdfFileReader
 
-app = Client("compress_bot", bot_token="YOUR_BOT_TOKEN")
+app = Client("compress_bot", bot_token="6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64")
 
 @app.on_message(filters.command("compress"))
 def compress_pdf(client, message):
