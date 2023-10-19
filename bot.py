@@ -6,7 +6,7 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 # Pyrogram API credentials
 API_ID = 29943901
 API_HASH = "1028f4e64a5ba57ec59f4587feeabc95"
-BOT_TOKEN = "6660071929:AAH6JvMfr3uNEEOVkR1YTZq7c5tPrx-Jc64"
+BOT_TOKEN = "6660071929:AAFjXcut37ti05_AahCG7nvHdKRQDyUuBaI"
 
 # Create a Pyrogram client instance
 app = pyrogram.Client("pdf_compressor", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
