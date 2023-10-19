@@ -66,6 +66,7 @@ async def compress_pdf(c, m: Message):
         doc.Close()
     except Exception:
         await msg.edit(Presets.JOB_ERROR, reply_markup=close_button)
+        print(Exception)
         return
     #
     # Let's find out the compressed document file size
